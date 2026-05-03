@@ -1,0 +1,19 @@
+.DS_Store
+Thumbs.db
+
+# Local environment files
+.env
+.env.*
+
+# Dependency folders if the site is ever converted to a build-based project
+node_modules/
+
+# Build output
+dist/
+build/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*

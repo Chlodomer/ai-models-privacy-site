@@ -1,0 +1,1938 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Models, Privacy, and Academic Practice</title>
+  <style>
+    :root {
+      --forest: #062f22;
+      --deep: #031a13;
+      --moss: #466b43;
+      --ochre: #d9a23a;
+      --rust: #b65a3c;
+      --plum: #5a4668;
+      --blue: #3f6f95;
+      --paper: #fbf7ee;
+      --cream: #f2eadb;
+      --ink: #171814;
+      --muted: #66665d;
+      --line: rgba(23, 24, 20, 0.16);
+      --white: #fffaf2;
+      --shadow: 0 28px 80px rgba(3, 26, 19, 0.18);
+      --soft-shadow: 0 16px 38px rgba(3, 26, 19, 0.12);
+      --chrome-height: clamp(88px, 8vh, 112px);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      overflow-x: clip;
+      height: 100%;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Avenir Next", "Segoe UI", ui-sans-serif, sans-serif;
+      color: var(--ink);
+      background: var(--deep);
+      line-height: 1.58;
+      overflow-x: clip;
+      min-height: 100%;
+    }
+
+    body.is-paged {
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button {
+      font: inherit;
+    }
+
+    .site-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 20;
+      display: grid;
+      grid-template-columns: minmax(220px, 1fr) auto auto;
+      gap: 22px;
+      align-items: center;
+      min-height: var(--chrome-height);
+      padding: 10px clamp(18px, 5vw, 72px);
+      color: var(--white);
+      background: rgba(3, 26, 19, 0.92);
+      backdrop-filter: blur(18px);
+      border-bottom: 1px solid rgba(255, 250, 242, 0.10);
+      box-shadow: 0 18px 46px rgba(3, 26, 19, 0.16);
+      transition: background 320ms ease, box-shadow 320ms ease, transform 420ms cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .site-header.is-collapsed {
+      background: rgba(3, 26, 19, 0.82);
+      box-shadow: 0 10px 28px rgba(3, 26, 19, 0.12);
+    }
+
+    .site-header.is-collapsed:hover,
+    .site-header.is-collapsed:focus-within {
+      background: rgba(3, 26, 19, 0.94);
+      box-shadow: 0 18px 46px rgba(3, 26, 19, 0.16);
+    }
+
+    .brand {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      min-width: 0;
+    }
+
+    .brand-mark {
+      position: relative;
+      width: 48px;
+      height: 48px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--deep);
+      background: var(--ochre);
+      border-radius: 12px;
+      font-size: 0;
+      font-weight: 900;
+      line-height: 1;
+      letter-spacing: 0.02em;
+      box-shadow: inset 0 0 0 1px rgba(255, 250, 242, 0.32);
+      transition: transform 320ms cubic-bezier(0.22, 1, 0.36, 1), border-radius 320ms ease;
+    }
+
+    .brand-mark::before {
+      content: "AI";
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      font-size: 14px;
+      line-height: 1;
+      transform: translateY(1px);
+    }
+
+    .site-header.is-collapsed .brand-mark {
+      transform: scale(0.78);
+      border-radius: 10px;
+    }
+
+    .site-header.is-collapsed:hover .brand-mark,
+    .site-header.is-collapsed:focus-within .brand-mark {
+      transform: scale(1);
+      border-radius: 12px;
+    }
+
+    .brand strong {
+      display: block;
+      font-size: 17px;
+      line-height: 1.18;
+      transition: transform 320ms cubic-bezier(0.22, 1, 0.36, 1), opacity 260ms ease;
+    }
+
+    .site-header.is-collapsed .brand strong {
+      opacity: 0.92;
+      transform: translateY(1px) scale(0.9);
+      transform-origin: left center;
+    }
+
+    .site-header.is-collapsed:hover .brand strong,
+    .site-header.is-collapsed:focus-within .brand strong {
+      opacity: 1;
+      transform: none;
+    }
+
+    .brand span {
+      display: block;
+      font-size: 12px;
+      color: rgba(255, 250, 242, 0.68);
+      transition: opacity 220ms ease, transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
+      max-height: 24px;
+      overflow: hidden;
+    }
+
+    .site-header.is-collapsed .brand-copy span {
+      opacity: 0;
+      transform: translateY(-4px);
+    }
+
+    .site-header.is-collapsed:hover .brand-copy span,
+    .site-header.is-collapsed:focus-within .brand-copy span {
+      opacity: 1;
+      transform: none;
+    }
+
+    .top-nav {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      transition: opacity 220ms ease, transform 260ms cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .site-header.is-collapsed .top-nav {
+      opacity: 0;
+      transform: translateY(-6px);
+      pointer-events: none;
+    }
+
+    .site-header.is-collapsed:hover .top-nav,
+    .site-header.is-collapsed:focus-within .top-nav {
+      opacity: 1;
+      transform: none;
+      pointer-events: auto;
+    }
+
+    .site-header.is-collapsed .top-nav a {
+      padding-top: 9px;
+      padding-bottom: 9px;
+    }
+
+    .site-header.is-collapsed:hover .top-nav a,
+    .site-header.is-collapsed:focus-within .top-nav a {
+      padding-top: 9px;
+      padding-bottom: 9px;
+    }
+
+    .top-nav a {
+      padding: 9px 11px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 700;
+      color: rgba(255, 250, 242, 0.78);
+      transition: background 180ms ease, color 180ms ease, transform 180ms ease;
+    }
+
+    .top-nav a:hover {
+      color: var(--white);
+      background: rgba(255, 250, 242, 0.08);
+      transform: translateY(-1px);
+    }
+
+    .top-nav a.is-current {
+      color: var(--white);
+      background: rgba(217, 162, 58, 0.22);
+    }
+
+    .header-action {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 42px;
+      padding: 0 16px;
+      color: var(--deep);
+      background: var(--ochre);
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 800;
+      transition: opacity 220ms ease, transform 180ms ease, box-shadow 180ms ease, background 180ms ease;
+    }
+
+    .site-header.is-collapsed .header-action {
+      opacity: 0;
+      transform: translateY(-6px);
+      pointer-events: none;
+    }
+
+    .site-header.is-collapsed:hover .header-action,
+    .site-header.is-collapsed:focus-within .header-action {
+      opacity: 1;
+      transform: none;
+      pointer-events: auto;
+    }
+
+    .header-action:hover,
+    .button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 14px 28px rgba(3, 26, 19, 0.22);
+    }
+
+    .hero {
+      min-height: calc(100vh - var(--chrome-height));
+      position: relative;
+      display: grid;
+      align-items: end;
+      padding: clamp(60px, 8vw, 108px) clamp(18px, 5vw, 72px) clamp(118px, 10vw, 156px);
+      overflow: visible;
+      color: var(--white);
+      background: var(--deep);
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(90deg, rgba(3, 26, 19, 0.94) 0%, rgba(3, 26, 19, 0.76) 30%, rgba(3, 26, 19, 0.20) 70%),
+        linear-gradient(180deg, rgba(3, 26, 19, 0.2), rgba(3, 26, 19, 0.82)),
+        url("assets/faculty-workshop.png") center / cover no-repeat;
+      transform: scale(1.02);
+      animation: photoSettle 1200ms ease both;
+    }
+
+    .page-panel.is-page-active.hero::before {
+      animation: photoSettle 1200ms ease both, imageBreathe 9000ms ease-in-out 1200ms infinite alternate;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: minmax(0, 0.95fr) minmax(300px, 0.75fr);
+      gap: clamp(28px, 6vw, 92px);
+      align-items: center;
+      width: 100%;
+      max-width: 1220px;
+      margin: 0 auto;
+    }
+
+    .hero-copy {
+      padding-bottom: 0;
+    }
+
+    .hero h1 {
+      margin: 0 0 24px;
+      max-width: 760px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(46px, 8vw, 104px);
+      line-height: 0.95;
+      letter-spacing: -0.035em;
+    }
+
+    .hero p {
+      margin: 0 0 30px;
+      max-width: 640px;
+      font-size: clamp(18px, 2vw, 23px);
+      color: rgba(255, 250, 242, 0.82);
+    }
+
+    .text-ochre {
+      color: var(--ochre);
+    }
+
+    .text-rust {
+      color: #e08a68;
+      font-weight: 800;
+    }
+
+    .text-plum {
+      color: #806493;
+      font-weight: 800;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 46px;
+      padding: 0 18px;
+      border: 1px solid rgba(255, 250, 242, 0.22);
+      border-radius: 8px;
+      color: var(--white);
+      background: rgba(255, 250, 242, 0.08);
+      font-size: 14px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform 180ms ease, box-shadow 180ms ease, background 180ms ease, color 180ms ease;
+    }
+
+    .button.primary {
+      color: var(--deep);
+      background: var(--ochre);
+      border-color: var(--ochre);
+    }
+
+    .button.dark {
+      color: var(--white);
+      background: var(--forest);
+      border-color: var(--forest);
+    }
+
+    .cover-brief {
+      margin-bottom: 0;
+      padding: 22px;
+      color: var(--ink);
+      background: rgba(251, 247, 238, 0.94);
+      border: 1px solid rgba(255, 250, 242, 0.32);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+    }
+
+    .cover-brief h2 {
+      margin: 0 0 14px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 28px;
+      line-height: 1.1;
+    }
+
+    .brief-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .brief-item {
+      padding: 12px 14px;
+      border: 1px solid rgba(217, 162, 58, 0.32);
+      background: var(--white);
+      border-radius: 8px;
+      transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+    }
+
+    .brief-item:nth-child(2) {
+      border-color: rgba(182, 90, 60, 0.34);
+    }
+
+    .brief-item:nth-child(3) {
+      border-color: rgba(90, 70, 104, 0.34);
+    }
+
+    .brief-item:hover {
+      transform: translateX(4px);
+      box-shadow: var(--soft-shadow);
+    }
+
+    .brief-item strong {
+      display: block;
+      font-size: 13px;
+      color: var(--forest);
+    }
+
+    .brief-item span {
+      display: block;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    main {
+      background: transparent;
+    }
+
+    .page-panel {
+      position: fixed;
+      inset: var(--chrome-height) 0 0;
+      z-index: 1;
+      display: grid;
+      min-height: 0;
+      height: auto;
+      overflow-x: hidden;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transform: translateX(7vw) scale(0.985);
+      transition: none;
+    }
+
+    body.is-ready .page-panel {
+      transition:
+        opacity 560ms cubic-bezier(0.22, 1, 0.36, 1),
+        transform 680ms cubic-bezier(0.22, 1, 0.36, 1),
+        visibility 0ms linear 680ms;
+    }
+
+    .page-panel.is-page-active {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+      transform: translateX(0) scale(1);
+      transition: none;
+    }
+
+    body.is-ready .page-panel.is-page-active {
+      transition:
+        opacity 560ms cubic-bezier(0.22, 1, 0.36, 1),
+        transform 680ms cubic-bezier(0.22, 1, 0.36, 1),
+        visibility 0ms;
+    }
+
+    body[data-page-direction="prev"] .page-panel {
+      transform: translateX(-7vw) scale(0.985);
+    }
+
+    body[data-page-direction="prev"] .page-panel.is-page-active {
+      transform: translateX(0) scale(1);
+    }
+
+    .page-panel .inner {
+      width: min(1220px, calc(100vw - clamp(36px, 8vw, 144px)));
+      min-height: 0;
+      display: grid;
+      align-content: start;
+      margin: 0 auto;
+    }
+
+    .visually-hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    .edge-nav {
+      position: fixed;
+      inset: var(--chrome-height) 0 0;
+      z-index: 30;
+      pointer-events: none;
+    }
+
+    .edge-arrow {
+      position: absolute;
+      top: 50%;
+      display: grid;
+      place-items: center;
+      width: clamp(54px, 5vw, 76px);
+      height: clamp(72px, 8vw, 108px);
+      border: 1px solid rgba(255, 250, 242, 0.34);
+      color: var(--deep);
+      background: var(--ochre);
+      box-shadow: 0 18px 44px rgba(3, 26, 19, 0.24);
+      cursor: pointer;
+      font-weight: 800;
+      font-size: clamp(28px, 3vw, 42px);
+      line-height: 1;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(-50%);
+      transition: opacity 260ms ease, transform 320ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 220ms ease, background 220ms ease;
+    }
+
+    .edge-arrow:hover {
+      background: #efbb4c;
+      box-shadow: 0 24px 58px rgba(3, 26, 19, 0.34);
+    }
+
+    .edge-arrow-prev {
+      left: 0;
+      border-radius: 0 18px 18px 0;
+      transform: translate(-78%, -50%);
+    }
+
+    .edge-arrow-next {
+      right: 0;
+      border-radius: 18px 0 0 18px;
+      transform: translate(78%, -50%);
+    }
+
+    body.show-prev-arrow .edge-arrow-prev,
+    body.show-next-arrow .edge-arrow-next,
+    .edge-arrow:focus-visible {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translate(0, -50%);
+    }
+
+    .edge-arrow-prev:hover {
+      transform: translateY(-50%) translateX(-4px);
+    }
+
+    .edge-arrow-next:hover {
+      transform: translateY(-50%) translateX(4px);
+    }
+
+    .section {
+      align-items: start;
+      padding: clamp(58px, 8vw, 108px) clamp(18px, 5vw, 72px) clamp(110px, 11vw, 150px);
+      background:
+        linear-gradient(135deg, rgba(217, 162, 58, 0.1), rgba(90, 70, 104, 0.08) 46%, rgba(63, 111, 149, 0.08)),
+        var(--paper);
+    }
+
+    #studio,
+    #next {
+      align-items: center;
+    }
+
+    #principles {
+      background:
+        linear-gradient(90deg, rgba(251, 247, 238, 0.96) 0%, rgba(251, 247, 238, 0.92) 48%, rgba(251, 247, 238, 0.7)),
+        url("assets/source-validation.png") right center / 54% auto no-repeat,
+        var(--paper);
+    }
+
+    #studio {
+      background:
+        linear-gradient(90deg, rgba(251, 247, 238, 0.98) 0%, rgba(251, 247, 238, 0.9) 46%, rgba(242, 234, 219, 0.72)),
+        url("assets/local-workstation.png") right center / cover no-repeat,
+        var(--paper);
+    }
+
+    .section.compact {
+      padding-top: clamp(42px, 6vw, 76px);
+    }
+
+    .inner {
+      max-width: 1220px;
+      margin: 0 auto;
+    }
+
+    .section-head {
+      display: grid;
+      grid-template-columns: minmax(220px, 0.7fr) minmax(300px, 1fr);
+      gap: clamp(24px, 5vw, 72px);
+      align-items: end;
+      margin-bottom: 34px;
+    }
+
+    .section-head h2 {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(34px, 5vw, 62px);
+      line-height: 1;
+      letter-spacing: -0.025em;
+      color: var(--deep);
+    }
+
+    .section-head p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 18px;
+    }
+
+    .tabs {
+      display: grid;
+      gap: 18px;
+    }
+
+    .tab-stage {
+      overflow: hidden;
+      border-radius: 16px;
+    }
+
+    .tab-track {
+      display: flex;
+      width: 400%;
+      transition: transform 520ms cubic-bezier(0.22, 1, 0.36, 1);
+      will-change: transform;
+    }
+
+    .tab-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 8px;
+      background: var(--cream);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+    }
+
+    .tab-button {
+      min-height: 42px;
+      padding: 0 14px;
+      border: 0;
+      border-radius: 8px;
+      color: var(--muted);
+      background: transparent;
+      font-weight: 800;
+      cursor: pointer;
+      transition: background 180ms ease, color 180ms ease, transform 180ms ease;
+    }
+
+    .tab-button:hover {
+      transform: translateY(-1px);
+      color: var(--forest);
+      background: rgba(255, 250, 242, 0.62);
+    }
+
+    .tab-button[aria-selected="true"] {
+      color: var(--white);
+      background: var(--forest);
+    }
+
+    .tab-panel {
+      display: grid;
+      grid-template-columns: minmax(0, 0.72fr) minmax(280px, 1fr);
+      gap: clamp(22px, 4vw, 52px);
+      align-items: center;
+      flex: 0 0 25%;
+      min-height: 315px;
+      padding: clamp(22px, 4vw, 42px);
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      box-shadow: var(--soft-shadow);
+      opacity: 0.42;
+      transform: scale(0.985);
+      transition: opacity 320ms ease, transform 320ms ease;
+    }
+
+    .tab-panel.active {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .tab-panel h3 {
+      margin: 0 0 14px;
+      color: var(--forest);
+      font-size: clamp(24px, 3vw, 36px);
+      line-height: 1.12;
+    }
+
+    .tab-panel p {
+      margin: 0 0 18px;
+      color: var(--muted);
+      font-size: 17px;
+    }
+
+    .principle-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .principle-list div {
+      padding: 12px 14px;
+      border: 1px solid rgba(63, 111, 149, 0.22);
+      background: var(--paper);
+      border-radius: 8px;
+      color: var(--muted);
+    }
+
+    .principle-list div:nth-child(2) {
+      border-color: rgba(182, 90, 60, 0.24);
+    }
+
+    .principle-list div:nth-child(3) {
+      border-color: rgba(217, 162, 58, 0.32);
+    }
+
+    .feature-image {
+      min-height: 290px;
+      border-radius: 14px;
+      background-position: center;
+      background-size: cover;
+      box-shadow: var(--soft-shadow);
+    }
+
+    .privacy-image {
+      background-image: url("assets/local-workstation.png");
+    }
+
+    .validation-image {
+      background-image: url("assets/source-validation.png");
+    }
+
+    .workshop-image {
+      background-image: url("assets/faculty-workshop.png");
+    }
+
+    .split-band {
+      display: grid;
+      grid-template-columns: minmax(0, 0.86fr) minmax(0, 1.14fr);
+      min-height: 0;
+      height: auto;
+      background: var(--deep);
+      color: var(--white);
+    }
+
+    .split-copy {
+      padding: clamp(34px, 6vw, 72px) clamp(34px, 6vw, 72px) clamp(118px, 10vw, 148px);
+      display: grid;
+      align-content: center;
+      gap: 22px;
+    }
+
+    .split-copy h2 {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(36px, 5vw, 66px);
+      line-height: 1;
+    }
+
+    .split-copy p {
+      margin: 0;
+      color: rgba(255, 250, 242, 0.74);
+      font-size: 18px;
+    }
+
+    .split-media {
+      position: relative;
+      min-height: 0;
+      height: 100%;
+      background: url("assets/local-workstation.png") center / cover no-repeat;
+      overflow: hidden;
+      isolation: isolate;
+      transition: background-position 420ms cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .split-media::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, rgba(3, 26, 19, 0.28), transparent 38%, rgba(3, 26, 19, 0.16));
+      pointer-events: none;
+    }
+
+    .split-band[data-privacy="cloud"] .split-media {
+      background-position: 35% center;
+    }
+
+    .split-band[data-privacy="local"] .split-media {
+      background-position: center;
+    }
+
+    .split-band[data-privacy="university"] .split-media {
+      background-position: 70% center;
+    }
+
+    .privacy-detail {
+      position: absolute;
+      left: clamp(18px, 4vw, 44px);
+      right: clamp(18px, 4vw, 44px);
+      top: clamp(34px, 7vw, 86px);
+      z-index: 1;
+      max-width: 520px;
+      padding: 20px;
+      border: 1px solid rgba(255, 250, 242, 0.18);
+      border-radius: 14px;
+      color: var(--white);
+      background: rgba(3, 26, 19, 0.82);
+      box-shadow: 0 18px 48px rgba(3, 26, 19, 0.24);
+      transition: opacity 280ms ease, transform 280ms ease;
+    }
+
+    .privacy-detail.is-changing {
+      opacity: 0;
+      transform: translateX(18px);
+    }
+
+    .privacy-detail strong {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--ochre);
+      font-size: 12px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .privacy-detail p {
+      margin: 0;
+      color: rgba(255, 250, 242, 0.76);
+    }
+
+    .privacy-options {
+      display: grid;
+      gap: 12px;
+      max-width: 680px;
+    }
+
+    .privacy-option {
+      border: 1px solid rgba(255, 250, 242, 0.16);
+      border-radius: 12px;
+      background: rgba(255, 250, 242, 0.07);
+      padding: 16px 18px;
+      cursor: pointer;
+      transition: background 220ms ease, border-color 220ms ease, transform 220ms ease;
+    }
+
+    .privacy-option:hover {
+      transform: translateX(4px);
+      border-color: rgba(217, 162, 58, 0.42);
+    }
+
+    .privacy-option.is-active {
+      background: rgba(217, 162, 58, 0.16);
+      border-color: rgba(217, 162, 58, 0.58);
+    }
+
+    .privacy-option h3 {
+      margin: 0 0 6px;
+      font-size: 16px;
+      color: var(--white);
+    }
+
+    .privacy-option p {
+      margin: 0;
+      font-size: 15px;
+      color: rgba(255, 250, 242, 0.72);
+    }
+
+    .studio {
+      display: grid;
+      grid-template-columns: minmax(260px, 0.72fr) minmax(0, 1.28fr);
+      gap: clamp(22px, 4vw, 46px);
+      align-items: center;
+      min-height: clamp(520px, 64vh, 680px);
+      padding: clamp(36px, 5vw, 66px);
+      background: linear-gradient(135deg, rgba(247, 240, 229, 0.96), rgba(236, 231, 241, 0.94));
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      box-shadow: var(--soft-shadow);
+      transform-origin: center;
+    }
+
+    .studio h2 {
+      margin: 0 0 16px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(42px, 5vw, 72px);
+      line-height: 1;
+    }
+
+    .studio p {
+      max-width: 54ch;
+      margin: 0;
+      color: var(--muted);
+      font-size: 18px;
+    }
+
+    .studio-form {
+      display: grid;
+      gap: 16px;
+    }
+
+    .choice-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .choice-set {
+      display: grid;
+      gap: 8px;
+    }
+
+    .choice-set > span {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .choice-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+    }
+
+    .choice-button {
+      min-height: 38px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 0 12px;
+      color: var(--muted);
+      background: var(--white);
+      font-size: 14px;
+      font-weight: 750;
+      cursor: pointer;
+      transition: border-color 180ms ease, background 180ms ease, color 180ms ease, transform 180ms ease;
+    }
+
+    .choice-button:hover {
+      transform: translateY(-1px);
+      border-color: rgba(6, 47, 34, 0.36);
+      color: var(--forest);
+    }
+
+    .choice-button.is-active {
+      border-color: var(--forest);
+      background: var(--forest);
+      color: var(--white);
+    }
+
+    .recommendation {
+      padding: 20px;
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      min-height: 150px;
+      transition: transform 220ms ease, box-shadow 220ms ease;
+    }
+
+    .recommendation.changed {
+      transform: translateY(-3px);
+      box-shadow: var(--soft-shadow);
+    }
+
+    .recommendation strong {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--forest);
+      font-size: 18px;
+    }
+
+    .recommendation span {
+      color: var(--muted);
+    }
+
+    .evidence {
+      background:
+        linear-gradient(135deg, rgba(63, 111, 149, 0.22), transparent 34%),
+        linear-gradient(315deg, rgba(90, 70, 104, 0.26), transparent 42%),
+        var(--deep);
+      color: var(--white);
+      overflow-x: hidden;
+      overflow-y: auto;
+      padding-top: clamp(28px, 4vw, 54px);
+      padding-bottom: clamp(58px, 7vw, 92px);
+    }
+
+    .evidence .inner {
+      min-height: 100%;
+      grid-template-columns: minmax(280px, 0.72fr) minmax(520px, 1.08fr);
+      gap: clamp(30px, 6vw, 86px);
+      align-items: center;
+      align-content: center;
+    }
+
+    .evidence .section-head {
+      display: block;
+      align-items: center;
+      margin-bottom: 0;
+    }
+
+    .evidence .section-head h2,
+    .evidence .section-head p {
+      color: var(--white);
+    }
+
+    .evidence .section-head h2 {
+      font-size: clamp(34px, 4.2vw, 56px);
+    }
+
+    .evidence .section-head p {
+      max-width: 50ch;
+    }
+
+    .case-viewer {
+      display: grid;
+      gap: 12px;
+    }
+
+    .case-card {
+      display: none;
+      grid-template-columns: minmax(0, 1.08fr) minmax(280px, 0.72fr);
+      min-height: clamp(320px, 46vh, 430px);
+      border-radius: 16px;
+      overflow: hidden;
+      background: rgba(255, 250, 242, 0.08);
+      border: 1px solid rgba(255, 250, 242, 0.14);
+      animation: contentIn 260ms ease both;
+    }
+
+    .case-card.is-active {
+      display: grid;
+    }
+
+    .case-card img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      min-height: clamp(320px, 46vh, 430px);
+      object-fit: cover;
+    }
+
+    .case-card div {
+      padding: clamp(22px, 4vw, 40px);
+      align-self: center;
+    }
+
+    .case-card span {
+      display: block;
+      color: var(--ochre);
+      font-size: 12px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 10px;
+    }
+
+    .case-card h3 {
+      margin: 0 0 10px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(28px, 3.4vw, 46px);
+      line-height: 1.15;
+    }
+
+    .case-card p {
+      margin: 0;
+      color: rgba(255, 250, 242, 0.72);
+    }
+
+    .case-controls {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+      align-items: center;
+    }
+
+    .case-control {
+      min-width: 44px;
+      min-height: 40px;
+      border: 1px solid rgba(255, 250, 242, 0.2);
+      border-radius: 8px;
+      color: var(--white);
+      background: rgba(255, 250, 242, 0.08);
+      cursor: pointer;
+      font-size: 18px;
+      transition: background 180ms ease, transform 180ms ease;
+    }
+
+    .case-control:hover {
+      transform: translateY(-1px);
+      background: rgba(217, 162, 58, 0.18);
+    }
+
+    .case-count {
+      color: rgba(255, 250, 242, 0.62);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .next-panel {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 28px;
+      align-items: center;
+      padding: clamp(24px, 5vw, 44px);
+      background: var(--forest);
+      color: var(--white);
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+    }
+
+    .next-panel h2 {
+      margin: 0 0 10px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(32px, 5vw, 58px);
+      line-height: 1;
+    }
+
+    .next-panel p {
+      margin: 0;
+      color: rgba(255, 250, 242, 0.76);
+    }
+
+    .footer {
+      padding: 28px clamp(18px, 5vw, 72px);
+      color: rgba(255, 250, 242, 0.62);
+      background: var(--deep);
+      font-size: 13px;
+    }
+
+    .is-paged .footer {
+      display: none;
+    }
+
+    .reveal {
+      opacity: 1;
+      transform: translateY(14px);
+      transition: transform 620ms ease;
+    }
+
+    .reveal.is-visible {
+      transform: translateY(0);
+    }
+
+    .page-panel.is-page-active .reveal,
+    .page-panel.is-page-active .studio,
+    .page-panel.is-page-active .case-card.is-active,
+    .page-panel.is-page-active .next-panel {
+      animation: contentRise 760ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+
+    .page-panel.is-page-active .brief-item,
+    .page-panel.is-page-active .privacy-option,
+    .page-panel.is-page-active .choice-set {
+      animation: detailRise 640ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+
+    .page-panel.is-page-active .brief-item:nth-child(2),
+    .page-panel.is-page-active .privacy-option:nth-child(2),
+    .page-panel.is-page-active .choice-set:nth-child(2) {
+      animation-delay: 80ms;
+    }
+
+    .page-panel.is-page-active .brief-item:nth-child(3),
+    .page-panel.is-page-active .privacy-option:nth-child(3),
+    .page-panel.is-page-active .choice-set:nth-child(3) {
+      animation-delay: 150ms;
+    }
+
+    .page-panel.is-page-active .choice-set:nth-child(4) {
+      animation-delay: 220ms;
+    }
+
+    .page-panel.is-page-active .feature-image,
+    .page-panel.is-page-active .case-card.is-active img {
+      animation: imageBreathe 9000ms ease-in-out infinite alternate;
+    }
+
+    @keyframes photoSettle {
+      from { transform: scale(1.06); opacity: 0.72; }
+      to { transform: scale(1.02); opacity: 1; }
+    }
+
+    @keyframes panelIn {
+      from { opacity: 0; transform: translateY(-8px) scale(0.98); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    @keyframes contentIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes pageIn {
+      from { opacity: 0; transform: translateX(34px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    @keyframes pageInNext {
+      from { opacity: 0; transform: translateX(46px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    @keyframes pageInPrev {
+      from { opacity: 0; transform: translateX(-46px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    @keyframes contentRise {
+      from { opacity: 0; transform: translateY(22px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes detailRise {
+      from { opacity: 0; transform: translateY(14px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes imageBreathe {
+      from { transform: scale(1); }
+      to { transform: scale(1.035); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto;
+      }
+
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001ms !important;
+      }
+
+      .reveal {
+        opacity: 1;
+        transform: none;
+      }
+    }
+
+    @media (max-width: 980px) {
+      .site-header {
+        grid-template-columns: 1fr;
+        gap: 10px;
+        padding-block: 10px;
+      }
+
+      .top-nav {
+        flex-wrap: wrap;
+      }
+
+      .hero {
+        padding-top: 54px;
+      }
+
+      .page-panel.hero {
+        min-height: calc(100vh - var(--chrome-height));
+      }
+
+      .hero-content,
+      .section-head,
+      .split-band,
+      .studio,
+      .next-panel {
+        grid-template-columns: 1fr;
+      }
+
+      .evidence .inner {
+        grid-template-columns: 1fr;
+        gap: 24px;
+        align-content: start;
+      }
+
+      .tab-panel {
+        grid-template-columns: 1fr;
+      }
+
+      .split-media {
+        min-height: 330px;
+        order: -1;
+      }
+
+      .edge-arrow {
+        width: 52px;
+        height: 82px;
+      }
+
+    }
+
+    @media (max-width: 640px) {
+      .site-header {
+        grid-template-columns: 1fr;
+      }
+
+      .brand strong {
+        font-size: 15px;
+      }
+
+      .brand .brand-copy span {
+        display: none;
+      }
+
+      .top-nav {
+        display: none;
+      }
+
+      .header-action,
+      .button {
+        width: 100%;
+      }
+
+      .header-action {
+        display: none;
+      }
+
+      .edge-arrow {
+        width: 42px;
+        height: 64px;
+        font-size: 26px;
+      }
+
+      .hero h1 {
+        font-size: clamp(42px, 13vw, 58px);
+      }
+
+      .tab-controls,
+      .hero-actions {
+        display: grid;
+      }
+
+      .tab-button {
+        width: 100%;
+      }
+
+      .choice-grid,
+      .case-card {
+        grid-template-columns: 1fr;
+      }
+
+      .case-card img {
+        min-height: 260px;
+      }
+
+      .case-card {
+        min-height: 410px;
+      }
+    }
+
+    @media (pointer: coarse) {
+      .edge-arrow {
+        opacity: 0.82;
+        pointer-events: auto;
+        transform: translate(0, -50%);
+      }
+    }
+  </style>
+</head>
+<body class="is-paged" data-page-direction="next">
+  <header class="site-header">
+    <a class="brand" href="#top" aria-label="AI Models, Privacy, and Academic Practice home">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <span class="brand-copy">
+        <strong>AI Models, Privacy, and Academic Practice</strong>
+        <span>Meeting guide from April 27, 2026</span>
+      </span>
+    </a>
+
+    <nav class="top-nav" aria-label="Main navigation">
+      <a href="#principles">Principles</a>
+      <a href="#privacy">Privacy</a>
+      <a href="#studio">Model studio</a>
+      <a href="#evidence">Evidence</a>
+    </nav>
+
+    <a class="header-action" href="#studio">Find the right model</a>
+  </header>
+
+  <section class="hero page-panel" id="top">
+    <div class="hero-content">
+      <div class="hero-copy reveal">
+        <h1>Use AI freely, but know where the work is happening.</h1>
+        <p>
+          A practical guide for faculty on <span class="text-rust">privacy</span>, model choice,
+          context, validation, and assessment.
+        </p>
+        <div class="hero-actions">
+          <a class="button primary" href="#privacy">Start with privacy</a>
+          <a class="button" href="#principles">Explore the guide</a>
+        </div>
+      </div>
+
+      <aside class="cover-brief reveal" aria-label="Meeting summary">
+        <h2>What the meeting changed</h2>
+        <div class="brief-list">
+          <div class="brief-item">
+            <strong>Privacy became the first decision.</strong>
+            <span>Cloud tools are powerful, but sensitive work needs a different home.</span>
+          </div>
+          <div class="brief-item">
+            <strong>Model choice became task choice.</strong>
+            <span>Pick the model for the job, not because it is the familiar brand.</span>
+          </div>
+          <div class="brief-item">
+            <strong>Assessment became proof of understanding.</strong>
+            <span>AI can support learning, but students must still show what they know.</span>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <main>
+    <section class="section compact page-panel" id="principles">
+      <div class="inner">
+        <div class="section-head reveal">
+          <h2>Core decisions from the meeting.</h2>
+        </div>
+
+        <div class="tabs reveal">
+          <div class="tab-controls" role="tablist" aria-label="Guide topics">
+            <button class="tab-button" role="tab" aria-selected="true" aria-controls="privacy-tab" id="privacy-control">Privacy</button>
+            <button class="tab-button" role="tab" aria-selected="false" aria-controls="models-tab" id="models-control">Model choice</button>
+            <button class="tab-button" role="tab" aria-selected="false" aria-controls="context-tab" id="context-control">Context</button>
+            <button class="tab-button" role="tab" aria-selected="false" aria-controls="assessment-tab" id="assessment-control">Assessment</button>
+          </div>
+
+          <div class="tab-stage">
+            <div class="tab-track">
+              <article class="tab-panel active" role="tabpanel" id="privacy-tab" aria-labelledby="privacy-control">
+                <div>
+                  <h3>Privacy is not a footnote. It is the first branch in the decision.</h3>
+                  <p>
+                    Routine drafting, planning, coding, and non-sensitive analysis can usually use cloud tools.
+                    Medical, psychological, financial, legal, student, or personally identifying material should not be pasted into them.
+                  </p>
+                  <div class="principle-list">
+                    <div><strong>Routine material:</strong> cloud tools are usually acceptable.</div>
+                    <div><strong>Sensitive material:</strong> keep it local or on university infrastructure.</div>
+                    <div><strong>Unclear material:</strong> treat it as sensitive until you know otherwise.</div>
+                  </div>
+                </div>
+                <div class="feature-image privacy-image" role="img" aria-label="Secure local workstation with documents and laptop"></div>
+              </article>
+
+              <article class="tab-panel" role="tabpanel" id="models-tab" aria-labelledby="models-control">
+                <div>
+                  <h3>Choose by task: fast answer, careful reasoning, coding, video, or local privacy.</h3>
+                  <p>
+                    The meeting treated models as tools with different strengths. Fast modes are good for low-stakes drafting.
+                    thinking modes are better for comparison, critique, and planning. Video-native tools help with presentations.
+                  </p>
+                  <div class="principle-list">
+                    <div><strong>Instant:</strong> quick drafting and simple summaries.</div>
+                    <div><strong>Thinking:</strong> analysis, comparison, planning, and synthesis.</div>
+                    <div><strong>Local:</strong> sensitive documents that should stay off external servers.</div>
+                  </div>
+                </div>
+                <div class="feature-image workshop-image" role="img" aria-label="Faculty workshop discussing AI use"></div>
+              </article>
+
+              <article class="tab-panel" role="tabpanel" id="context-tab" aria-labelledby="context-control">
+                <div>
+                  <h3>A good prompt is a workflow, not a magic sentence.</h3>
+                  <p>
+                    Context, task, output format, and validation instructions all matter. The model should know
+                    who you are helping, what material it can use, and what a useful answer should look like.
+                  </p>
+                  <div class="principle-list">
+                    <div><strong>Context:</strong> role, audience, sources, limits, and examples.</div>
+                    <div><strong>Task:</strong> compare, critique, extract, draft, grade, or build.</div>
+                    <div><strong>Output:</strong> length, structure, language, citation style, and evidence.</div>
+                  </div>
+                </div>
+                <div class="feature-image validation-image" role="img" aria-label="Annotated research sources and validation notes"></div>
+              </article>
+
+              <article class="tab-panel" role="tabpanel" id="assessment-tab" aria-labelledby="assessment-control">
+                <div>
+                  <h3>Do not pretend AI is absent. Design proof that understanding is present.</h3>
+                  <p>
+                    A short video or oral explanation can show whether students understand the material.
+                    AI may help prepare, but the final work must still reveal judgment, evidence, and ownership.
+                  </p>
+                  <div class="principle-list">
+                    <div><strong>Research:</strong> AI can support exploration and practice.</div>
+                    <div><strong>Evidence:</strong> students distinguish verified claims from suggestions.</div>
+                    <div><strong>Presentation:</strong> students explain the subject in their own words.</div>
+                  </div>
+                </div>
+                <div class="feature-image workshop-image" role="img" aria-label="Academic discussion in a library seminar room"></div>
+              </article>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="split-band page-panel" id="privacy" data-privacy="cloud">
+      <div class="split-copy">
+        <div class="reveal">
+          <h2>Keep sensitive work in the right places.</h2>
+          <p>
+            The practical rule from the meeting is simple: when the information could harm a person,
+            a student, a patient, a project, or the university if exposed, do not upload it casually.
+          </p>
+        </div>
+
+        <div class="privacy-options reveal">
+          <article class="privacy-option is-active" role="button" tabindex="0" data-privacy-choice="cloud">
+            <h3>Cloud models</h3>
+            <p>Use them for routine academic work, planning, drafting, coding, public documents, and general learning tasks.</p>
+          </article>
+          <article class="privacy-option" role="button" tabindex="0" data-privacy-choice="local">
+            <h3>Local models</h3>
+            <p>Use them when the data should stay on your computer. Open models can be useful for private drafts and sensitive source material.</p>
+          </article>
+          <article class="privacy-option" role="button" tabindex="0" data-privacy-choice="university">
+            <h3>University infrastructure</h3>
+            <p>For larger sensitive needs, Bar-Ilan on-premise options may be the right direction through IT or DSAI.</p>
+          </article>
+        </div>
+      </div>
+      <div class="split-media" role="img" aria-label="Local workstation with documents and laptop">
+        <div class="privacy-detail" aria-live="polite">
+          <strong id="privacy-detail-label">Cloud path</strong>
+          <p id="privacy-detail-text">Fast and useful for general work, but not a place for sensitive records or identifiable material.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section page-panel" id="studio">
+      <div class="inner">
+        <div class="studio reveal">
+          <div>
+            <h2>Find the right model for the work in front of you.</h2>
+            <p>
+              This is a small decision studio. Change the choices and the recommendation shifts.
+              It makes the meeting advice usable without another long explanation.
+            </p>
+          </div>
+
+          <div class="studio-form">
+            <div class="choice-grid">
+              <div class="choice-set" data-choice-group="task">
+                <span>Task</span>
+                <div class="choice-options" role="group" aria-label="Task">
+                  <button class="choice-button is-active" type="button" data-value="analysis">Analyze</button>
+                  <button class="choice-button" type="button" data-value="drafting">Draft</button>
+                  <button class="choice-button" type="button" data-value="video">Video</button>
+                  <button class="choice-button" type="button" data-value="coding">Code</button>
+                </div>
+              </div>
+              <div class="choice-set" data-choice-group="data">
+                <span>Data</span>
+                <div class="choice-options" role="group" aria-label="Data type">
+                  <button class="choice-button is-active" type="button" data-value="sensitive">Sensitive</button>
+                  <button class="choice-button" type="button" data-value="routine">Routine</button>
+                  <button class="choice-button" type="button" data-value="public">Public</button>
+                </div>
+              </div>
+              <div class="choice-set" data-choice-group="priority">
+                <span>Priority</span>
+                <div class="choice-options" role="group" aria-label="Priority">
+                  <button class="choice-button is-active" type="button" data-value="accuracy">Accuracy</button>
+                  <button class="choice-button" type="button" data-value="speed">Speed</button>
+                  <button class="choice-button" type="button" data-value="privacy">Privacy</button>
+                </div>
+              </div>
+              <div class="choice-set" data-choice-group="output">
+                <span>Output</span>
+                <div class="choice-options" role="group" aria-label="Output">
+                  <button class="choice-button is-active" type="button" data-value="evidence">Evidence</button>
+                  <button class="choice-button" type="button" data-value="draft">Draft</button>
+                  <button class="choice-button" type="button" data-value="rubric">Rubric</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="recommendation" id="recommendation" aria-live="polite">
+              <strong>Recommended approach: local or on-premise reasoning model.</strong>
+              <span>Sensitive data should stay local. Use a careful model, provide only relevant context, and ask for evidence limits.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section evidence page-panel" id="evidence">
+      <div class="inner">
+        <div class="section-head reveal">
+          <h2>Validation should feel like research practice, not paranoia.</h2>
+          <p>
+            The meeting’s strongest practical message was that AI can help, but it must be checked.
+            Use the examples to move between research, privacy, and teaching decisions without leaving the section.
+          </p>
+        </div>
+
+        <div class="case-viewer reveal">
+          <div class="case-stage" aria-label="Evidence examples">
+            <article class="case-card is-active">
+              <img src="assets/source-validation.png" alt="Research documents with annotations">
+              <div>
+                <span>Research</span>
+                <h3>Ask for source quotes and page details.</h3>
+                <p>When a model uses documents, require direct evidence and mark what cannot be verified.</p>
+              </div>
+            </article>
+            <article class="case-card">
+              <img src="assets/local-workstation.png" alt="Laptop and archival documents on a desk">
+              <div>
+                <span>Privacy</span>
+                <h3>Keep participant data out of the cloud.</h3>
+                <p>Sensitive records belong in local or university-controlled environments.</p>
+              </div>
+            </article>
+            <article class="case-card">
+              <img src="assets/faculty-workshop.png" alt="Faculty members discussing AI use">
+              <div>
+                <span>Teaching</span>
+                <h3>Use AI to prepare, then ask students to explain.</h3>
+                <p>Video or oral presentation can show whether students actually understand the topic.</p>
+              </div>
+            </article>
+          </div>
+          <div class="case-controls" aria-label="Evidence controls">
+            <span class="case-count" id="case-count">1 / 3</span>
+            <button class="case-control" type="button" data-case-direction="-1" aria-label="Previous example">‹</button>
+            <button class="case-control" type="button" data-case-direction="1" aria-label="Next example">›</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section page-panel" id="next">
+      <div class="inner">
+        <div class="next-panel reveal">
+          <div>
+            <h2>For the next session, bring one real task.</h2>
+            <p>
+              A document, assessment, course workflow, research task, or question is enough.
+              The next meeting should be hands-on rather than another abstract tour.
+            </p>
+          </div>
+          <a class="button primary" href="mailto:?subject=Questions%20for%20next%20AI%20session">Prepare a question</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="edge-nav" aria-label="Screen controls">
+    <button class="edge-arrow edge-arrow-prev" type="button" data-page-direction="-1" aria-label="Previous screen">&lt;</button>
+    <button class="edge-arrow edge-arrow-next" type="button" data-page-direction="1" aria-label="Next screen">&gt;</button>
+    <span class="visually-hidden" id="page-status" aria-live="polite">Screen 1 of 6</span>
+  </div>
+
+  <footer class="footer">
+    Source: Notion meeting note “AI Models: Privacy, Usage, and Best Practices,” April 27, 2026, 12:05 PM GMT+3.
+  </footer>
+
+  <script>
+    const header = document.querySelector(".site-header");
+    const pageOrder = ["top", "principles", "privacy", "studio", "evidence", "next"];
+    const pageStatus = document.getElementById("page-status");
+    const pagePanels = pageOrder.map((id) => document.getElementById(id));
+    const pageLinks = Array.from(document.querySelectorAll('a[href^="#"]')).filter((link) => {
+      const target = link.getAttribute("href").slice(1);
+      return pageOrder.includes(target);
+    });
+    let activePage = 0;
+    let wheelLocked = false;
+    let navLocked = false;
+    let headerTimer;
+
+    function setHeaderCollapsed(collapsed) {
+      header.classList.toggle("is-collapsed", collapsed);
+    }
+
+    function scheduleHeaderCollapse(delay = 900) {
+      window.clearTimeout(headerTimer);
+      headerTimer = window.setTimeout(() => {
+        if (!header.matches(":hover") && !header.contains(document.activeElement)) {
+          setHeaderCollapsed(true);
+        }
+      }, delay);
+    }
+
+    function applyPage(index, direction = 1) {
+      activePage = (index + pagePanels.length) % pagePanels.length;
+      document.body.dataset.pageDirection = direction < 0 ? "prev" : "next";
+
+      pagePanels.forEach((panel, panelIndex) => {
+        panel.classList.toggle("is-page-active", panelIndex === activePage);
+        if (panelIndex === activePage) {
+          panel.scrollTop = 0;
+        }
+      });
+
+      pageLinks.forEach((link) => {
+        const target = link.getAttribute("href").slice(1);
+        link.classList.toggle("is-current", target === pageOrder[activePage]);
+      });
+
+      pageStatus.textContent = `Screen ${activePage + 1} of ${pagePanels.length}`;
+      history.replaceState(null, "", `#${pageOrder[activePage]}`);
+      window.scrollTo(0, 0);
+      scheduleHeaderCollapse(240);
+    }
+
+    function showPage(index) {
+      const direction = index < activePage ? -1 : 1;
+      if (index === activePage || navLocked) return;
+      navLocked = true;
+      applyPage(index, direction);
+      window.setTimeout(() => {
+        navLocked = false;
+      }, 720);
+    }
+
+    header.addEventListener("mouseenter", () => window.clearTimeout(headerTimer));
+    header.addEventListener("mouseleave", () => scheduleHeaderCollapse(520));
+    header.addEventListener("focusin", () => window.clearTimeout(headerTimer));
+    header.addEventListener("focusout", () => scheduleHeaderCollapse(520));
+
+    window.addEventListener("mousemove", (event) => {
+      const edgeDistance = Math.min(150, Math.max(96, window.innerWidth * 0.075));
+      document.body.classList.toggle("show-prev-arrow", event.clientX <= edgeDistance);
+      document.body.classList.toggle("show-next-arrow", event.clientX >= window.innerWidth - edgeDistance);
+    });
+
+    window.addEventListener("mouseleave", () => {
+      document.body.classList.remove("show-prev-arrow", "show-next-arrow");
+    });
+
+    pageLinks.forEach((link) => {
+      link.addEventListener("click", (event) => {
+        event.preventDefault();
+        showPage(pageOrder.indexOf(link.getAttribute("href").slice(1)));
+      });
+    });
+
+    document.querySelectorAll(".edge-arrow[data-page-direction]").forEach((button) => {
+      button.addEventListener("click", () => {
+        if (navLocked) return;
+        navLocked = true;
+        applyPage(activePage + Number(button.dataset.pageDirection), Number(button.dataset.pageDirection));
+        window.setTimeout(() => {
+          navLocked = false;
+        }, 720);
+      });
+    });
+
+    window.addEventListener("keydown", (event) => {
+      const tagName = event.target.tagName;
+      if (tagName === "INPUT" || tagName === "TEXTAREA" || tagName === "SELECT") return;
+      if (event.key === "ArrowRight") showPage(activePage + 1);
+      if (event.key === "ArrowLeft") showPage(activePage - 1);
+    });
+
+    window.addEventListener("wheel", (event) => {
+      if (event.target.closest(".edge-nav, .site-header, button, a, .privacy-option, .tab-controls, .choice-options, .case-controls")) {
+        return;
+      }
+      const activePanel = pagePanels[activePage];
+      const gesture = Math.abs(event.deltaX) > Math.abs(event.deltaY) ? event.deltaX : event.deltaY;
+      if (Math.abs(gesture) < 35) return;
+
+      const movingForward = gesture > 0;
+      const panelCanScroll = activePanel.scrollHeight > activePanel.clientHeight + 2;
+      const panelAtStart = activePanel.scrollTop <= 1;
+      const panelAtEnd = activePanel.scrollTop + activePanel.clientHeight >= activePanel.scrollHeight - 2;
+      const shouldTurnPage = !panelCanScroll || (movingForward && panelAtEnd) || (!movingForward && panelAtStart);
+
+      if (!shouldTurnPage) return;
+      event.preventDefault();
+      if (wheelLocked) return;
+
+      wheelLocked = true;
+      showPage(activePage + (movingForward ? 1 : -1));
+      window.setTimeout(() => {
+        wheelLocked = false;
+      }, 720);
+    }, { passive: false });
+
+    const initialHash = window.location.hash.replace("#", "");
+    if (pageOrder.includes(initialHash)) {
+      applyPage(pageOrder.indexOf(initialHash), 1);
+    } else {
+      applyPage(0, 1);
+    }
+
+    window.requestAnimationFrame(() => {
+      document.body.classList.add("is-ready");
+      scheduleHeaderCollapse(1200);
+    });
+
+    const tabButtons = Array.from(document.querySelectorAll(".tab-button"));
+    const tabPanels = Array.from(document.querySelectorAll(".tab-panel"));
+    const tabTrack = document.querySelector(".tab-track");
+
+    tabButtons.forEach((button, index) => {
+      button.addEventListener("click", () => {
+        tabButtons.forEach((item) => item.setAttribute("aria-selected", "false"));
+        tabPanels.forEach((panel) => panel.classList.remove("active"));
+        button.setAttribute("aria-selected", "true");
+        const panel = document.getElementById(button.getAttribute("aria-controls"));
+        panel.classList.add("active");
+        tabTrack.style.transform = `translateX(-${index * 25}%)`;
+      });
+    });
+
+    const privacyCopy = {
+      cloud: {
+        label: "Cloud path",
+        text: "Fast and useful for general work, but not a place for sensitive records or identifiable material."
+      },
+      local: {
+        label: "Local path",
+        text: "Best when the source material should stay on your computer. Use focused excerpts and keep the work close to the data."
+      },
+      university: {
+        label: "University path",
+        text: "Use institutional infrastructure when the work is sensitive, larger in scale, or needs stronger governance."
+      }
+    };
+
+    const privacySection = document.querySelector(".split-band");
+    const privacyDetail = document.querySelector(".privacy-detail");
+    const privacyLabel = document.getElementById("privacy-detail-label");
+    const privacyText = document.getElementById("privacy-detail-text");
+
+    function setPrivacyMode(mode) {
+      privacySection.dataset.privacy = mode;
+      document.querySelectorAll(".privacy-option").forEach((option) => {
+        option.classList.toggle("is-active", option.dataset.privacyChoice === mode);
+      });
+      privacyDetail.classList.add("is-changing");
+      window.setTimeout(() => {
+        privacyLabel.textContent = privacyCopy[mode].label;
+        privacyText.textContent = privacyCopy[mode].text;
+        privacyDetail.classList.remove("is-changing");
+      }, 160);
+    }
+
+    document.querySelectorAll(".privacy-option").forEach((option) => {
+      option.addEventListener("click", () => setPrivacyMode(option.dataset.privacyChoice));
+      option.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          setPrivacyMode(option.dataset.privacyChoice);
+        }
+      });
+    });
+
+    const recommendation = document.getElementById("recommendation");
+    const studioChoices = {
+      task: "analysis",
+      data: "sensitive",
+      priority: "accuracy",
+      output: "evidence"
+    };
+
+    function updateRecommendation() {
+      const { task, data, priority, output } = studioChoices;
+
+      let title = "Recommended approach: use a thinking model with strong validation.";
+      let body = "Give the model focused context, request a structured answer, and ask it to separate evidence from uncertainty.";
+
+      if (data === "sensitive" || priority === "privacy") {
+        title = "Recommended approach: local or on-premise model.";
+        body = "Sensitive data should stay local. Use only relevant excerpts and avoid uploading names, records, or confidential material.";
+      } else if (task === "video") {
+        title = "Recommended approach: video-native model.";
+        body = "Use a model that can inspect the recording directly, then ask for a rubric-aligned review and examples from the video.";
+      } else if (task === "coding") {
+        title = "Recommended approach: coding-strong model.";
+        body = "Use a model that can reason across files, then test the result. Treat passing tests as evidence, not decoration.";
+      } else if (priority === "speed" && output === "draft") {
+        title = "Recommended approach: fast model for a first draft.";
+        body = "Use it to get moving, then switch to a more careful review step before sharing or teaching from the result.";
+      }
+
+      recommendation.classList.remove("changed");
+      recommendation.offsetHeight;
+      recommendation.classList.add("changed");
+      recommendation.innerHTML = `<strong>${title}</strong><span>${body}</span>`;
+    }
+
+    document.querySelectorAll(".choice-set").forEach((set) => {
+      const group = set.dataset.choiceGroup;
+      set.querySelectorAll(".choice-button").forEach((button) => {
+        button.addEventListener("click", () => {
+          studioChoices[group] = button.dataset.value;
+          set.querySelectorAll(".choice-button").forEach((item) => item.classList.remove("is-active"));
+          button.classList.add("is-active");
+          updateRecommendation();
+        });
+      });
+    });
+
+    const caseCards = Array.from(document.querySelectorAll(".case-card"));
+    const caseCount = document.getElementById("case-count");
+    let activeCase = 0;
+
+    function showCase(index) {
+      activeCase = (index + caseCards.length) % caseCards.length;
+      caseCards.forEach((card, cardIndex) => {
+        card.classList.toggle("is-active", cardIndex === activeCase);
+      });
+      caseCount.textContent = `${activeCase + 1} / ${caseCards.length}`;
+    }
+
+    document.querySelectorAll("[data-case-direction]").forEach((button) => {
+      button.addEventListener("click", () => {
+        showCase(activeCase + Number(button.dataset.caseDirection));
+      });
+    });
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("is-visible");
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.16 });
+
+    document.querySelectorAll(".reveal").forEach((item) => observer.observe(item));
+
+  </script>
+</body>
+</html>
