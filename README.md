@@ -24,10 +24,10 @@ This guide is intended for Bar-Ilan faculty, clinicians, researchers, and studen
 .
 ├── index.html
 ├── assets/
-│   ├── design-concept.png
-│   ├── faculty-workshop.png
-│   ├── local-workstation.png
-│   └── source-validation.png
+│   ├── design-concept.png / .webp
+│   ├── faculty-workshop.png / .webp
+│   ├── local-workstation.png / .webp
+│   └── source-validation.png / .webp
 ├── PRODUCT.md
 ├── DESIGN.md
 └── README.md
