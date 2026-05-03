@@ -427,50 +427,18 @@
     }
 
     .page-panel {
-      position: fixed;
-      inset: var(--chrome-height) 0 0;
+      position: relative;
       z-index: 1;
       display: grid;
-      min-height: 0;
+      min-height: calc(100vh - var(--chrome-height));
       height: auto;
-      overflow-x: hidden;
-      overflow-y: auto;
-      overscroll-behavior: contain;
-      opacity: 0;
-      visibility: hidden;
-      pointer-events: none;
-      transform: translateX(7vw) scale(0.985);
-      transition: none;
-    }
-
-    body.is-ready .page-panel {
-      transition:
-        opacity 560ms cubic-bezier(0.22, 1, 0.36, 1),
-        transform 680ms cubic-bezier(0.22, 1, 0.36, 1),
-        visibility 0ms linear 680ms;
-    }
-
-    .page-panel.is-page-active {
+      overflow: visible;
       opacity: 1;
       visibility: visible;
       pointer-events: auto;
-      transform: translateX(0) scale(1);
+      transform: none;
       transition: none;
-    }
-
-    body.is-ready .page-panel.is-page-active {
-      transition:
-        opacity 560ms cubic-bezier(0.22, 1, 0.36, 1),
-        transform 680ms cubic-bezier(0.22, 1, 0.36, 1),
-        visibility 0ms;
-    }
-
-    body[data-page-direction="prev"] .page-panel {
-      transform: translateX(-7vw) scale(0.985);
-    }
-
-    body[data-page-direction="prev"] .page-panel.is-page-active {
-      transform: translateX(0) scale(1);
+      scroll-margin-top: var(--chrome-height);
     }
 
     .page-panel .inner {
@@ -494,10 +462,7 @@
     }
 
     .edge-nav {
-      position: fixed;
-      inset: var(--chrome-height) 0 0;
-      z-index: 30;
-      pointer-events: none;
+      display: none;
     }
 
     .edge-arrow {
@@ -1139,7 +1104,7 @@
 
     .reveal {
       opacity: 1;
-      transform: translateY(14px);
+      transform: none;
       transition: transform 620ms ease;
     }
 
@@ -1352,7 +1317,7 @@
     }
   </style>
 </head>
-<body class="is-paged" data-page-direction="next">
+<body data-page-direction="next">
   <header class="site-header">
     <a class="brand" href="#top" aria-label="AI Models, Privacy, and Academic Practice home">
       <span class="brand-mark" aria-hidden="true"></span>
@@ -1663,6 +1628,7 @@
       const target = link.getAttribute("href").slice(1);
       return pageOrder.includes(target);
     });
+    const usePagedNavigation = false;
     let activePage = 0;
     let navLocked = false;
     let headerTimer;
@@ -1717,46 +1683,48 @@
     header.addEventListener("focusin", () => window.clearTimeout(headerTimer));
     header.addEventListener("focusout", () => scheduleHeaderCollapse(520));
 
-    window.addEventListener("mousemove", (event) => {
-      const edgeDistance = Math.min(150, Math.max(96, window.innerWidth * 0.075));
-      document.body.classList.toggle("show-prev-arrow", event.clientX <= edgeDistance);
-      document.body.classList.toggle("show-next-arrow", event.clientX >= window.innerWidth - edgeDistance);
-    });
-
-    window.addEventListener("mouseleave", () => {
-      document.body.classList.remove("show-prev-arrow", "show-next-arrow");
-    });
-
-    pageLinks.forEach((link) => {
-      link.addEventListener("click", (event) => {
-        event.preventDefault();
-        showPage(pageOrder.indexOf(link.getAttribute("href").slice(1)));
+    if (usePagedNavigation) {
+      window.addEventListener("mousemove", (event) => {
+        const edgeDistance = Math.min(150, Math.max(96, window.innerWidth * 0.075));
+        document.body.classList.toggle("show-prev-arrow", event.clientX <= edgeDistance);
+        document.body.classList.toggle("show-next-arrow", event.clientX >= window.innerWidth - edgeDistance);
       });
-    });
 
-    document.querySelectorAll(".edge-arrow[data-page-direction]").forEach((button) => {
-      button.addEventListener("click", () => {
-        if (navLocked) return;
-        navLocked = true;
-        applyPage(activePage + Number(button.dataset.pageDirection), Number(button.dataset.pageDirection));
-        window.setTimeout(() => {
-          navLocked = false;
-        }, 720);
+      window.addEventListener("mouseleave", () => {
+        document.body.classList.remove("show-prev-arrow", "show-next-arrow");
       });
-    });
 
-    window.addEventListener("keydown", (event) => {
-      const tagName = event.target.tagName;
-      if (tagName === "INPUT" || tagName === "TEXTAREA" || tagName === "SELECT") return;
-      if (event.key === "ArrowRight") showPage(activePage + 1);
-      if (event.key === "ArrowLeft") showPage(activePage - 1);
-    });
+      pageLinks.forEach((link) => {
+        link.addEventListener("click", (event) => {
+          event.preventDefault();
+          showPage(pageOrder.indexOf(link.getAttribute("href").slice(1)));
+        });
+      });
 
-    const initialHash = window.location.hash.replace("#", "");
-    if (pageOrder.includes(initialHash)) {
-      applyPage(pageOrder.indexOf(initialHash), 1);
-    } else {
-      applyPage(0, 1);
+      document.querySelectorAll(".edge-arrow[data-page-direction]").forEach((button) => {
+        button.addEventListener("click", () => {
+          if (navLocked) return;
+          navLocked = true;
+          applyPage(activePage + Number(button.dataset.pageDirection), Number(button.dataset.pageDirection));
+          window.setTimeout(() => {
+            navLocked = false;
+          }, 720);
+        });
+      });
+
+      window.addEventListener("keydown", (event) => {
+        const tagName = event.target.tagName;
+        if (tagName === "INPUT" || tagName === "TEXTAREA" || tagName === "SELECT") return;
+        if (event.key === "ArrowRight") showPage(activePage + 1);
+        if (event.key === "ArrowLeft") showPage(activePage - 1);
+      });
+
+      const initialHash = window.location.hash.replace("#", "");
+      if (pageOrder.includes(initialHash)) {
+        applyPage(pageOrder.indexOf(initialHash), 1);
+      } else {
+        applyPage(0, 1);
+      }
     }
 
     window.requestAnimationFrame(() => {
